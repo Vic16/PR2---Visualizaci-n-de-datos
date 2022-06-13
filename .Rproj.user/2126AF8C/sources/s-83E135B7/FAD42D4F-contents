@@ -27,7 +27,7 @@ library(viridis)
 
 Se ha decidido trabajar con un dataset llamado “Bank Marketing Data Set” (versión full, tiene algunos atributos más) el mismo puede ser encontrado en el siguiente [enlace](https://archive.ics.uci.edu/ml/datasets/Bank+Marketing).
 
-Se trata de un conjunto de datos público que fue lanzado por Sergio Moro Paulo Cortez y Paulo Rita en el año 2014. Los datos se encuentran anonimizados y pertenecen a una institución bancaria de Portugal. La idea de los investigadores fue utilizar diferentes algoritmos de clasificación para modelar el perfil del cliente que si aceptaba la suscripción de un servicio bancario a partir de una campaña de marketing y teniendo en cuenta diversos atributos del dicho cliente. En el presente entregable se realiza un Análisis Exploratorio Visual de la información contenida en el conjunto de datos mediante diferentes técnicas.
+Se trata de un conjunto de datos público que fue lanzado por Sergio Moro Paulo Cortez y Paulo Rita en el año 2014. Los datos se encuentran anonimizados y pertenecen a una institución bancaria de Portugal. La idea de los investigadores, fue utilizar diferentes algoritmos de clasificación para modelar el perfil del cliente. Este modelaje fue en función de si aceptaba la suscripción de un servicio bancario a partir de una campaña de marketing; teniendo en cuenta diversos atributos del dicho cliente. En el presente entregable se realiza un Análisis Exploratorio Visual de la información contenida en el conjunto de datos mediante diferentes técnicas.
 
 <br> </br>
 
@@ -223,7 +223,7 @@ df %>% ggplot(aes(balanceLog, fill= marital, color = marital)) +
 
 <br> </br>
 
-Se observan medianas del balance bancario ligeramente mayores, sin importar el estatus marital, de aquellos clientes que si contrataron el nuevo servicio financiero.
+Se observan medianas del balance bancario ligeramente mayores, sin importar el estatus marital, de aquellos clientes que sí contrataron el nuevo servicio financiero.
 
 <br> </br>
 

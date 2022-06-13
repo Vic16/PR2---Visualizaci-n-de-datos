@@ -3,7 +3,7 @@
     "path": "~/UOC/5.Visualizacion_Datos/A9_PR2/PR2 - Visualización de datos.Rmd",
     "project_path": "PR2 - Visualización de datos.Rmd",
     "type": "r_markdown",
-    "hash": "3819102483",
+    "hash": "1615930192",
     "contents": "",
     "dirty": false,
     "created": 1655132141378.0,
@@ -13,15 +13,15 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "280,68",
-        "scrollLine": "271"
+        "cursorPosition": "225,123",
+        "scrollLine": "219"
     },
     "folds": "",
-    "lastKnownWriteTime": 1655149358,
+    "lastKnownWriteTime": 1655151040,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1655149358527,
+    "last_content_update": 1655151040018,
     "read_only": false,
     "read_only_alternatives": []
 }
