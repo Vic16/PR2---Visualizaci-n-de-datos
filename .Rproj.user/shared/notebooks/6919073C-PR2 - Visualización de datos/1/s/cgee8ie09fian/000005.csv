@@ -1,0 +1,4 @@
+"0","df  %>%"
+"0","  ggplot(aes(x = age.cut, fill = education)) + geom_bar(show.legend = T) + theme_minimal() + "
+"0","  ylab(""Frecuencia"") +"
+"0","  xlab(""Grupos Etarios"")"

@@ -1,0 +1,315 @@
+---
+title: "PR2 - Visualización de datos"
+author: "Victor H. Ayala Sánchez"
+date: "1/6/2022"
+output: 
+ html_document:
+    toc: true
+    toc_float: true
+---
+
+
+```{r, message=FALSE, warning=FALSE,include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(forcats)
+library(plotly)
+library(ggridges)
+library(viridis)
+```
+
+
+
+
+# Descripción del conjunto de datos
+
+<br> </br>
+
+Se ha decidido trabajar con un dataset llamado “Bank Marketing Data Set” (versión full, tiene algunos atributos más) el mismo puede ser encontrado en el siguiente [enlace](https://archive.ics.uci.edu/ml/datasets/Bank+Marketing).
+
+Se trata de un conjunto de datos público que fue lanzado por Sergio Moro Paulo Cortez y Paulo Rita en el año 2014. Los datos se encuentran anonimizados y pertenecen a una institución bancaria de Portugal. La idea de los investigadores fue utilizar diferentes algoritmos de clasificación para modelar el perfil del cliente que si aceptaba la suscripción de un servicio bancario a partir de una campaña de marketing y teniendo en cuenta diversos atributos del dicho cliente. En el presente entregable se realiza un Análisis Exploratorio Visual de la información contenida en el conjunto de datos mediante diferentes técnicas.
+
+<br> </br>
+
+```{r, include=FALSE}
+df <- read.csv("data/bank-full.csv", sep = ";")
+
+df <- df %>% filter(balance>0)
+
+df$balanceScaled <- scale(df$balance)
+df$balanceLog <- log(df$balance)
+
+df <- df %>% filter(age < 80)
+
+categorias <- c("20-29", "30-39", "40-49","50-59","60-69", "70-79", "+80")
+df$age.cut <- cut(df$age, breaks = c(20, 30, 40, 50, 60, 70, 80, 90), labels = categorias)
+
+
+
+```
+
+
+
+
+# Análisis descriptivo
+
+<br> </br>
+
+## Age
+
+<br> </br>
+Analizamos en primer lugar la variable edad y la cruzamos con otras variables existentes en el conjunto de datos.
+
+<br> </br>
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+g1 <- df %>% ggplot(aes(reorder(job, -age, FUN = median), age, color = job, fill = job)) + 
+  geom_boxplot(alpha=0.75, show.legend = FALSE) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Type of Job") +
+  ggtitle("Distribución de la edad por tipo de trabajo de los clientes") +
+  theme(plot.title = element_text(size = 10))
+
+ggplotly(g1) %>% layout(showlegend = FALSE)
+
+#fig %>% 
+
+```
+
+<br> </br>
+<br> </br>
+
+Transformamos la variable edad y discretizamos en valores ordinales para crear grupos etarios.
+
+<br> </br>
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+g2 <-df  %>%
+  ggplot(aes(x = age.cut, fill = education)) + geom_bar(show.legend = T) + theme_minimal() + 
+  ylab("Frecuencia") +
+  xlab("Grupos Etarios") + 
+  ggtitle("Frecuencias de cada grupo etario teniendo en cuenta el nivel educativo del cliente") +
+  theme(plot.title = element_text(size = 10))
+
+ggplotly(g2)
+```
+
+<br> </br>
+<br> </br>
+
+Construímos histogramas de la edad en función de si el cliente tiene o no un préstamo con la institución. Se resalta el promedio de la edad de los clientes en ambas distribuciones.
+
+<br> </br>
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+g3 <- df %>% ggplot(aes(age, color = loan, fill = loan)) + 
+  geom_histogram() + 
+  facet_wrap(~loan) +
+  geom_vline(aes(xintercept=mean(age)), color="red",  size=1) + theme_minimal() + 
+  ggtitle("Distribución de la edad en función del préstamos con la institución") +
+  theme(plot.title = element_text(size = 10))
+  
+
+ggplotly(g3)
+```
+
+<br> </br>
+<br> </br>
+
+Resaltamos una constante que representa el promedio de edad del conjunto de datos.
+
+<br> </br>
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+g4<- df %>% ggplot(aes(age, color = marital, fill = marital)) + 
+  geom_histogram() + 
+  facet_wrap(~marital) +  
+  geom_vline(aes(xintercept=mean(age)),color="red",  size=1) + theme_minimal() + 
+   ggtitle("Distribución de la edad en función del estatus marital del cliente") +
+  theme(plot.title = element_text(size = 10))
+
+ggplotly(g4)
+```
+
+<br> </br>
+<br> </br>
+
+
+## Balance
+
+<br> </br>
+<br> </br>
+
+Realizamos un breve análisis sobre el balance en la cuenta bancaria del cliente. Para tener un análisis visual más limpio se realizó un transformación logarítmica sobre la variable
+
+<br> </br>
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+g5 <- df %>% ggplot(aes(balanceLog, color = job, fill = job)) + geom_histogram() + 
+  facet_wrap(~job) +  theme_minimal() +  
+   ggtitle("Distribución del balance bancario en función de la profesión del cliente") +
+   theme(plot.title = element_text(size = 10))
+
+ggplotly(g5) %>% layout(showlegend = FALSE)
+```
+
+
+
+<br> </br>
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+g6 <- df %>% ggplot(aes(x = education, y = balanceLog,  color= education, fill = education)) + facet_wrap(~loan) +
+  geom_boxplot(alpha=0.75, show.legend = FALSE) +
+  theme_minimal() +
+   ggtitle("Distribución del balance bancario en función del nivel educativo y la presencia de préstamo") +
+   theme(plot.title = element_text(size = 10))
+
+ggplotly(g6) %>% layout(showlegend = FALSE)
+```
+
+
+<br> </br>
+<br> </br>
+
+## Efectividad de la campaña
+
+<br> </br>
+<br> </br>
+
+Se presenta un breve análisis sobre la efectividad que tuvo la campaña de marketing sobre los clientes del banco con respecto a la contratación o no de un nuevo servicio.
+
+<br> </br>
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+groped <-df %>% group_by(month, y) %>% 
+  summarise(Count = n(), .groups = 'drop') %>% 
+  arrange(factor(month, levels = c("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"))) 
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+groped$month <- factor(groped$month,levels = c("jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec"))
+g7 <- groped %>% ggplot(aes(month, Count, color=y, fill=y)) + geom_bar(stat = "identity") + theme_minimal() +
+  ggtitle("Proporción de clientes que contrató el servicio por mes") + 
+  guides(fill=guide_legend(title="Contratación del servicio")) +
+  theme(plot.title = element_text(size = 10))
+
+ggplotly(g7) %>% layout(showlegend = FALSE)
+```
+
+
+<br> </br>
+
+<br> </br>
+
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+df %>% ggplot(aes(balanceLog, fill= marital, color = marital)) + 
+  geom_histogram(alpha = 0.55) + 
+  facet_wrap(~y) + 
+  theme_minimal() +
+  ggtitle("Distribución del balance bancario en función del estatus marital y la contratación del servicio") +
+  theme(plot.title = element_text(size = 10))
+```
+
+
+<br> </br>
+
+<br> </br>
+
+Se observan medianas del balance bancario ligeramente mayores, sin importar el estatus marital, de aquellos clientes que si contrataron el nuevo servicio financiero.
+
+<br> </br>
+
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+df %>% ggplot(aes(marital, balanceLog, color = marital, fill = marital)) + 
+  geom_boxplot(alpha = 0.75) + facet_wrap(~y) + theme_minimal() +
+  ggtitle("Distribución del balance bancario en función del estatus marital y la contratación del servicio") + 
+  theme(plot.title = element_text(size = 10))
+```
+
+
+<br> </br>
+
+<br> </br>
+
+La mediana del balance bancario por grupo etario es ligeramente mayor en los clientes que contrata el servicio financiero.
+
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+df %>%
+  ggplot(aes(x = age.cut, y = balanceLog, fill = y, color = y)) + 
+  geom_boxplot(alpha = 0.75, show.legend = T) + 
+  theme_minimal() + 
+  ggtitle("Distribución del balance bancario por grupo etario en función de la contratación del servicio") +
+  guides(fill=guide_legend(title="Contratación del servicio")) + theme(plot.title = element_text(size = 10)) +
+  theme(plot.title = element_text(size = 10))
+```
+
+
+<br> </br>
+
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(df, aes(x = balanceLog, y = `month`, fill = ..x..)) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) + facet_wrap(~y)  +
+  scale_fill_viridis(option = "C") + theme_minimal() + 
+  guides(fill=guide_legend(title="Nivel Balance")) + 
+  ggtitle("Distribución del balance bancario de los clientes por mes en función de si contrataron el servicio") +
+  theme(plot.title = element_text(size = 10))
+  
+```
+
+<br> </br>
+<br> </br>
+
+## Duración del contacto
+
+<br> </br>
+<br> </br>
+
+La distribuciones del duración del contacto son similares mes a mes.
+
+<br> </br>
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(df, aes(x = duration, y = `month`, fill = ..x..)) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) + 
+  scale_fill_viridis(option = "C") + theme_minimal() +
+    theme(
+      legend.position="none",
+      panel.spacing = unit(0.1, "lines"),
+      strip.text.x = element_text(size = 8)
+    ) + 
+  guides(fill=guide_legend(title="Duración del contacto")) + 
+  ggtitle("Distribución de la duración del contacto con el cliente por mes") 
+  
+```
+
+
+<br> </br>
+
+<br> </br>
+
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+df %>% ggplot(aes(y, duration, color = y, fill = y)) + 
+  geom_boxplot(alpha = 0.75, show.legend = FALSE) + theme_minimal() + theme(plot.title = element_text(size = 10)) +
+  ggtitle("Distribución de la duración del contacto en función de la contratación del servicio")
+  
+```
+
+
+<br> </br>
+
+<br> </br>

@@ -1,0 +1,6 @@
+"0","ggplot(df, aes(x = balanceLog, y = `month`, fill = ..x..)) +"
+"0","  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) + facet_wrap(~y)  "
+"2","Picking joint bandwidth of 0.314
+"
+"2","Picking joint bandwidth of 0.412
+"

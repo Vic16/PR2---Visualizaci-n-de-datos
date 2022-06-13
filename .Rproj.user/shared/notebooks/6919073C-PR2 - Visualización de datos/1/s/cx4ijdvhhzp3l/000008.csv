@@ -1,0 +1,4 @@
+"0","df %>% ggplot(aes(age, color = marital, fill = marital)) + geom_histogram() + facet_wrap(~marital) +  geom_vline(aes(xintercept=mean(age)),"
+"0","            color=""red"",  size=1)"
+"2","`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+"

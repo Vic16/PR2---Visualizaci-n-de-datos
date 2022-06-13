@@ -1,0 +1,4 @@
+"0","df %>%"
+"0","  ggplot(aes(x = age.cut, y = balanceLog, fill = y, color = y)) + "
+"0","  geom_boxplot(alpha = 0.75, show.legend = T) + "
+"0","  theme_minimal()"

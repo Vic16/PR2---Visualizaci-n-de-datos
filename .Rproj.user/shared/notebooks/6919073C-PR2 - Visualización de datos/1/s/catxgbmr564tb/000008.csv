@@ -1,0 +1,4 @@
+"0","ggplot(df, aes(x = duration, y = `month`, fill = ..x..)) +"
+"0","  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01)"
+"2","Picking joint bandwidth of 33.6
+"

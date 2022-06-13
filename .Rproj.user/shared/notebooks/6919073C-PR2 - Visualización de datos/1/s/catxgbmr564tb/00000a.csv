@@ -1,0 +1,8 @@
+"0","  scale_fill_viridis(option = ""C"") + theme_ipsum() +"
+"0","    theme("
+"0","      legend.position=""none"","
+"0","      panel.spacing = unit(0.1, ""lines""),"
+"0","      strip.text.x = element_text(size = 8)"
+"0","    )"
+"2","Error in theme_ipsum() : could not find function ""theme_ipsum""
+"

@@ -1,0 +1,347 @@
+---
+title: "Data Storytelling: Soccer Analytics"
+author: "Victor H. Ayala Sánchez"
+date: 
+output: 
+ html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+<br> </br>
+<br> </br>
+
+
+La data utilizada en el presente conjunto de visualizaciones  fue liberada en el año 2018 (el proveedor fue Wyscout) y el data set completo fue recopilado por Pappalardo et al.(2019) bajo CC BY 4.0 License para consulta pública, el mismo contiene información de eventos espacio temporales de las 5 principales ligas de fútbol de Europa de la temporada 2017-2018.
+
+Citas:
+
+- Pappalardo et al., (2019) A public data set of spatio-temporal match events in soccer competitions, Nature Scientific Data 6:236, https://www.nature.com/articles/s41597-019-0247-7
+
+- Pappalardo et al. (2019) PlayeRank: Data-driven Performance Evaluation and Player Ranking in Soccer via a Machine Learning Approach. ACM Transactions on Intellingent Systems and Technologies (TIST) 10, 5, Article 59 (September 2019), 27 pages. DOI: https://doi.org/10.1145/3343172
+
+Puedes conseguir el dataset completo y mayor informacióna acerca de la metodología y medición en el siguiente [link](https://figshare.com/collections/Soccer_match_event_dataset/4415000).
+
+La PEC consiste en realizar un análisis visual de los datos del **Real Madrid**. 
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+
+```{r, warning=FALSE, include=FALSE, message=FALSE, echo=FALSE}
+
+### Librerias
+library(forcats)
+library(dplyr)
+library(knitr)
+library(ggplot2)
+library(readr)
+library(kableExtra)
+library(jsonlite)
+library(ggsoccer)
+```
+
+
+```{r readData, echo=FALSE, cache=TRUE}
+eventos <- read.csv("data2/eventosRealMadrid.csv", sep = ";")
+matches <- read.csv("data2/matchesRealMadrid.csv", sep = "|")
+players <- read.csv("data2/playersRealMadrid.csv", sep = "|")
+```
+
+```{r, echo=FALSE}
+eventos$PlayerName <- eventos$playerId
+eventos$PlayerName[eventos$PlayerName == 14723] <- "Toni Kroos"
+eventos$PlayerName[eventos$PlayerName == 3304] <- "Nacho"
+eventos$PlayerName[eventos$PlayerName == 3306] <- "Sergio Ramos"
+eventos$PlayerName[eventos$PlayerName == 3309] <- "R. Varane"
+eventos$PlayerName[eventos$PlayerName == 3310] <- "Marcelo"
+eventos$PlayerName[eventos$PlayerName == 3321] <- "K. Benzema"
+eventos$PlayerName[eventos$PlayerName == 3563] <- "Isco"         
+eventos$PlayerName[eventos$PlayerName == 3785] <- "Kiko Casilla"
+eventos$PlayerName[eventos$PlayerName == 3915] <- "K. Navas"
+eventos$PlayerName[eventos$PlayerName == 4498] <- "Lucas Vazquez"
+eventos$PlayerName[eventos$PlayerName == 4501] <- "Dani Carvajal"
+eventos$PlayerName[eventos$PlayerName == 40756] <- "Casemiro"
+eventos$PlayerName[eventos$PlayerName == 8278] <- "Bale"
+eventos$PlayerName[eventos$PlayerName == 8287] <- "Modric"
+eventos$PlayerName[eventos$PlayerName == 473326]  <- "Moha Ramos"
+eventos$PlayerName[eventos$PlayerName ==  278289] <- "Odriozola"
+eventos$PlayerName[eventos$PlayerName ==  344120] <- "Borja Mayoral"
+eventos$PlayerName[eventos$PlayerName ==  344132] <- "T. Hernandez"
+eventos$PlayerName[eventos$PlayerName ==  279538] <-  "Marcos Llorente"
+eventos$PlayerName[eventos$PlayerName ==  282441] <- "Jesus Vallejo"
+eventos$PlayerName[eventos$PlayerName ==    3429] <-  "T. Courtois"
+eventos$PlayerName[eventos$PlayerName ==  288091] <-  "Marco Asensio"
+eventos$PlayerName[eventos$PlayerName ==  326523] <-  "Dani Ceballos"
+eventos$PlayerName[eventos$PlayerName ==  352985] <-  "L. Zidane"
+
+
+```
+
+
+# Estadísticas Generales de los eventos
+
+```{r eventos, echo=FALSE, cache=TRUE}
+eventos %>% 
+  group_by(eventName) %>% 
+  summarise(Count = n()) %>%
+  mutate(eventName = fct_reorder(eventName, desc(Count))) %>%
+  arrange(desc(Count )) %>% 
+  ggplot(aes(eventName, Count, fill = eventName, color = eventName)) + 
+  geom_bar(stat = "identity", show.legend = F) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  ggtitle("Frecuencias de los eventos a lo largo de la temporada")
+```
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+Líderes en el equipo en el número de pases en todas la temporada por jugador
+
+
+```{r statics, echo=FALSE}
+
+eventos %>%
+  filter(eventName == "Pass") %>%
+  group_by(PlayerName) %>% 
+  summarise(Count = n()) %>% 
+  arrange(desc(Count)) %>% 
+  head(10) %>%
+  kbl() %>%
+  kable_material(c("striped", "hover"))
+
+```
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+
+# Análisis de los pases
+
+```{r pases, echo=FALSE, cache=TRUE}
+eventos %>% 
+  filter(eventName == 'Pass') %>%
+  group_by(subEventName) %>% 
+  summarise(Count = n()) %>%
+  mutate(subEventName = fct_reorder(subEventName, desc(Count))) %>%
+  arrange(desc(Count )) %>% 
+  ggplot(aes(subEventName, Count, fill = subEventName, color = subEventName)) + 
+  geom_bar(stat = "identity", show.legend = F) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  ggtitle("Tipos de pases más frecuentes largo de la temporada")
+
+```
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+
+
+
+
+<br> </br>
+<br> </br>
+
+
+## Posición en el capo en el momento de los pases {.tabset .tabset-pills}
+
+### T. Kroos
+
+<br> </br>
+
+![](imgs/toni-kroos.webp)
+
+```{r Kroos, cache=TRUE, echo=FALSE}
+coordenadas <- eventos %>% filter(playerId == 14723 & eventName == 'Pass') %>% select(Y_init, X_init)
+ggplot(coordenadas)   + 
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE) + theme_pitch() + 
+  geom_point(aes(x = X_init, y = Y_init, color="#005CAB", fill = "#005CAB"), alpha = 0.65, show.legend = F) +
+  direction_label() 
+```
+
+
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+### L. Modric
+<br> </br>
+
+![](imgs/luka-modric.webp)
+
+```{r Modric, cache=TRUE, echo=FALSE}
+coordenadas <- eventos %>% filter(playerId == 8287 & eventName == 'Pass') %>% select(Y_init, X_init)
+ggplot(coordenadas)   + 
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE) + theme_pitch() + 
+  geom_point(aes(x = X_init, y = Y_init, color="#005CAB", fill = "#005CAB"), alpha = 0.65, show.legend = F) +
+  direction_label() 
+```
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+
+### Casemiro
+<br> </br>
+
+![](imgs/casemiro.webp)
+
+```{r casemiro, echo=FALSE, cache=TRUE}
+
+coordenadas <- eventos %>% filter(playerId == 40756 & eventName == 'Pass') %>% select(Y_init, X_init, subEventName)
+ggplot(coordenadas)   + 
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE, dimensions = pitch_wyscout) + 
+  theme_pitch() +
+  geom_point(aes(x = X_init, y = Y_init, color="#005CAB", fill = "#005CAB"), alpha = 0.65, show.legend = F) +
+  direction_label() 
+
+```
+<br> </br>
+<br> </br>
+<br> </br>
+
+## Destino de los pases largos {.tabset .tabset-pills}
+
+### T. Kroos
+
+<br> </br>
+
+![](imgs/toni-kroos.webp)
+
+```{r Kroos Pases largos, cache=TRUE, echo=FALSE}
+pass_data <- eventos %>% filter(playerId == 14723 & subEventName == "High pass" ) 
+
+ggplot(pass_data) +
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE, dimensions = pitch_wyscout) +
+  geom_segment(aes(x = X_init, y = Y_init, xend = X_end, yend = Y_end),
+               arrow = arrow(length = unit(0.10, "cm")),
+               color = "red") +
+  theme_pitch() +
+  direction_label() +
+  ggtitle("Pases largos ejecutados por Toni Kroos")
+```
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+### L. Modric
+
+<br> </br>
+
+![](imgs/luka-modric.webp)
+
+```{r, Modric Pase largo, cache=TRUE, echo=FALSE}
+pass_data <- eventos %>% filter(playerId == 8287 & subEventName == "High pass" ) 
+
+ggplot(pass_data) +
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE, dimensions = pitch_wyscout) +
+  geom_segment(aes(x = X_init, y = Y_init, xend = X_end, yend = Y_end),
+               arrow = arrow(length = unit(0.10, "cm")),
+               color = "red") +
+  theme_pitch() +
+  direction_label() +
+  ggtitle("Pases largos ejecutados por Modric")
+```
+
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+### Casemiro
+
+<br> </br>
+
+![](imgs/casemiro.webp)
+
+```{r casemiro pase largo, cache=TRUE, echo=FALSE}
+pass_data <- eventos %>% filter(playerId == 40756 & subEventName == "High pass" ) 
+
+ggplot(pass_data) +
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE, dimensions = pitch_wyscout) +
+  geom_segment(aes(x = X_init, y = Y_init, xend = X_end, yend = Y_end),
+               arrow = arrow(length = unit(0.10, "cm")),
+               color = "red") +
+  theme_pitch() +
+  direction_label() +
+  ggtitle("Pases largos ejecutados por Casemiro")
+```
+
+
+<br> </br>
+<br> </br>
+<br> </br>
+
+# Tiros al Arco {.tabset .tabset-pills}
+
+## Benzema
+
+<br> </br>
+
+![](imgs/karim-benzema.webp)
+
+```{r Benzema, echo=FALSE, cache=TRUE}
+
+coordenadas <- eventos %>% filter(playerId == 3321 & eventName == 'Shot') %>% select(Y_init, X_init, subEventName)
+ggplot(coordenadas)   + 
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE, dimensions = pitch_wyscout) +
+  theme_pitch() +
+  geom_point(aes(x = X_init, y = Y_init, color="#005CAB", fill = "#005CAB"), alpha = 0.85, show.legend = F) +
+  direction_label(x_label = 50,y_label = -3,label_length = 20,colour = "dimgray")
+
+
+```
+
+
+## Bale
+<br> </br>
+
+![](imgs/gareth-bale.webp)
+
+```{r Bale, echo=FALSE, cache=TRUE}
+
+coordenadas <- eventos %>% filter(playerId == 8278 & eventName == 'Shot') %>% select(Y_init, X_init, subEventName)
+ggplot(coordenadas)   + 
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE, dimensions = pitch_wyscout) +
+  theme_pitch() +
+  geom_point(aes(x = X_init, y = Y_init, color="#005CAB", fill = "#005CAB"), alpha = 0.85, show.legend = F) +
+  direction_label(x_label = 50,y_label = -3,label_length = 20,colour = "dimgray")
+
+
+```
+
+
+## M. Asensio
+
+<br> </br>
+
+![](imgs/marco-asensio.webp)
+
+```{r asencio, echo=FALSE, cache=TRUE}
+coordenadas <- eventos %>% filter(playerId == 288091 & eventName == 'Shot') %>% select(Y_init, X_init, subEventName)
+ggplot(coordenadas)   + 
+  annotate_pitch(colour = "white" , fill = "#7fc47f", limits = FALSE, dimensions = pitch_wyscout) +
+  theme_pitch() +
+  geom_point(aes(x = X_init, y = Y_init, color="#005CAB", fill = "#005CAB"), alpha = 0.85, show.legend = F) +
+  direction_label(x_label = 50,y_label = -3,label_length = 20,colour = "dimgray")
+
+```
+
+
+
+
+

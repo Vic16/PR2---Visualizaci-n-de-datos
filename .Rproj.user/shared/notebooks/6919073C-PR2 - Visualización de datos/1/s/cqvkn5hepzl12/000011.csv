@@ -1,0 +1,2 @@
+"0","groped$month <- factor(groped$month,levels = c(""jan"",""feb"",""mar"",""apr"",""may"",""jun"",""jul"",""aug"",""sep"",""oct"",""nov"",""dec""))"
+"0","groped %>% ggplot(aes(month, Count, color=y, fill=y)) + geom_bar(stat = ""identity"")"

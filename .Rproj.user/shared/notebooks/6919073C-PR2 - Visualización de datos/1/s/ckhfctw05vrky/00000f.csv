@@ -1,0 +1,3 @@
+"0","df %>% ggplot(aes(y, duration, color = y, fill = y)) + "
+"0","  geom_boxplot(alpha = 0.75, show.legend = FALSE) + theme_minimal() + theme(plot.title = element_text(size = 10)) +"
+"0","  ggtitle(""Distribución de la duración del contacto en función de la contratación del servicio"")"
